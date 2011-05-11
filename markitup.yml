@@ -1,0 +1,14 @@
+---
+enabled: true
+keyword: markItUp
+javascripts:
+- markitup/jquery.markitup.js
+- markitup/sets/default/set.js   
+#- markitup/markdown/set.js
+stylesheets:
+- markitup/skins/markitup/style.css
+- markitup/sets/default/style.css
+#- markitup/markdown/style.css
+settings:
+  previewParserPath: /markitup/markdown
+

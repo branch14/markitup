@@ -1,8 +1,14 @@
+require 'yaml'
+
 module Markitup
   class Middleware < Struct.new :app, :options
 
     def call(env)
       return app.call(env) unless config['enabled']
+
+      # if env["REQUEST_METHOD"] == "POST"
+      #   return render(:markdown, env) if env["PATH_INFO"] =~ /^\/markitup\/markdown/
+      # end
 
       status, headers, response = app.call(env)
       return [ status, headers, response ] unless 
@@ -25,19 +31,7 @@ module Markitup
     private
 
     def default_config
-      <<-EOB
----
-enabled: true
-keyword: markItUp
-javascripts:
-- markitup/jquery.markitup.js
-- markitup/sets/default/set.js   
-#- markitup/markdown/set.js
-stylesheets:
-- markitup/skins/markitup/style.css
-- markitup/sets/default/style.css
-#- markitup/markdown/style.css
-      EOB
+      File.read(File.expand_path('../../../markitup.yml', __FILE__))
     end
 
     def config
@@ -71,6 +65,15 @@ stylesheets:
       return 'mySettings' if config['settings'].nil? or config['settings'].empty?
       "mySettings, {" + config['settings'].map { |key, val| "'#{key}':'#{val}'" } * ',' + '}'
     end
+
+    # def render(format, env)
+    #   case format
+    #   when :markdown
+    #     require 'maruku'
+    #     body = Maruku.new(env['data']).to_html_document
+    #     Rack::Response.new body
+    #   end
+    # end
 
   end
 end
